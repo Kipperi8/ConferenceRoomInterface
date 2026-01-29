@@ -1,6 +1,6 @@
-const prompt = require('prompt-sync')();
+const inquirer = require('inquirer');
 
-function cancelReservation(database) {
+async function cancelReservation(database) {
   console.log('\n--- Varauksen peruutus ---\n');
 
   // Näytä kaikki varaukset
@@ -18,20 +18,27 @@ function cancelReservation(database) {
   });
 
   // Kysy varauksen ID
-  const reservationIdInput = prompt('\nSyötä peruutettavan varauksen ID: ');
-  const reservationId = parseInt(reservationIdInput);
+  const answer = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'reservationId',
+      message: '\nSyötä peruutettavan varauksen ID:',
+      validate: (input) => {
+        const id = parseInt(input);
+        if (isNaN(id)) {
+          return 'Varauksen ID:n tulee olla numero.';
+        }
+        const reservation = database.getReservationById(id);
+        if (!reservation) {
+          return `Varausta ID:llä ${id} ei löydy.`;
+        }
+        return true;
+      }
+    }
+  ]);
 
-  if (isNaN(reservationId)) {
-    console.log('\n❌ Virhe: Varauksen ID:n tulee olla numero.');
-    return;
-  }
-
-  // Tarkista, että varaus olemassa
+  const reservationId = parseInt(answer.reservationId);
   const reservation = database.getReservationById(reservationId);
-  if (!reservation) {
-    console.log('\n❌ Virhe: Varausta ID:llä ' + reservationId + ' ei löydy.');
-    return;
-  }
 
   // Peruuta varaus
   const success = database.cancelReservation(reservationId);

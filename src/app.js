@@ -1,4 +1,4 @@
-const prompt = require('prompt-sync')();
+const inquirer = require('inquirer');
 const Database = require('./database/Database');
 const createReservation = require('./commands/create-reservation/createReservationCommand');
 const cancelReservation = require('./commands/cancel-reservation/cancelReservationCommand');
@@ -17,25 +17,35 @@ function displayMenu() {
   console.log('╚════════════════════════════════════════╝');
 }
 
-function main() {
+async function main() {
   console.clear();
   console.log('Tervetuloa kokoushuoneiden varausrajapintaan!');
 
   while (true) {
     displayMenu();
-    const choice = prompt('\nValitse toiminto (1-4): ').trim();
+    const answer = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'choice',
+        message: 'Valitse toiminto:',
+        choices: [
+          { name: '1. Luo varaus', value: '1' },
+          { name: '2. Peruuta varaus', value: '2' },
+          { name: '3. Katso varaukset', value: '3' },
+          { name: '4. Lopeta sovellus', value: '4' }
+        ]
+      }
+    ]);
 
-    if (choice === '1') {
-      createReservation(database);
-    } else if (choice === '2') {
-      cancelReservation(database);
-    } else if (choice === '3') {
-      viewReservations(database);
-    } else if (choice === '4') {
+    if (answer.choice === '1') {
+      await createReservation(database);
+    } else if (answer.choice === '2') {
+      await cancelReservation(database);
+    } else if (answer.choice === '3') {
+      await viewReservations(database);
+    } else if (answer.choice === '4') {
       console.log('\nOhjelmasta poistutaan. Arvoisa näkemiin!');
       process.exit(0);
-    } else {
-      console.log('\n❌ Virhe: Valitse numero 1-4.');
     }
   }
 }

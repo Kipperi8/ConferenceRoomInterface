@@ -1,6 +1,6 @@
-const prompt = require('prompt-sync')();
+const inquirer = require('inquirer');
 
-function viewReservations(database) {
+async function viewReservations(database) {
   console.log('\n--- Varausten katselu ---\n');
 
   // Näytä saatavilla olevat huoneet
@@ -11,21 +11,32 @@ function viewReservations(database) {
   });
 
   // Kysy huone
-  const roomIdInput = prompt('\nSyötä huoneen ID (tai paina Enter nähdäksesi kaikki varaukset): ').trim();
+  const answer = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'roomId',
+      message: '\nSyötä huoneen ID (tai paina Enter nähdäksesi kaikki varaukset):',
+      validate: (input) => {
+        if (input === '') {
+          return true;
+        }
+        const id = parseInt(input);
+        if (isNaN(id)) {
+          return 'Huoneen ID:n tulee olla numero.';
+        }
+        if (!database.getRoomById(id)) {
+          return `Huonetta ID:llä ${id} ei löydy.`;
+        }
+        return true;
+      }
+    }
+  ]);
 
+  const roomIdInput = answer.roomId;
   let roomId = null;
 
   if (roomIdInput !== '') {
     roomId = parseInt(roomIdInput);
-    if (isNaN(roomId)) {
-      console.log('\n❌ Virhe: Huoneen ID:n tulee olla numero.');
-      return;
-    }
-
-    if (!database.getRoomById(roomId)) {
-      console.log('\n❌ Virhe: Huonetta ID:llä ' + roomId + ' ei löydy.');
-      return;
-    }
   }
 
   let reservations;
@@ -46,13 +57,13 @@ function viewReservations(database) {
 
   // Järjestä varaukset päivämäärän ja aloitusajan mukaan
   reservations.sort((a, b) => {
-    const dateCompare = a.pvm.localeCompare(b.pvm);
+    const [dayA, monthA, yearA] = a.pvm.split('-').map(Number);
+    const [dayB, monthB, yearB] = b.pvm.split('-').map(Number);
+    const dateA = new Date(yearA, monthA - 1, dayA);
+    const dateB = new Date(yearB, monthB - 1, dayB);
+    const dateCompare = dateA - dateB;
     if (dateCompare !== 0) {
-      const [dayA, monthA, yearA] = a.pvm.split('-').map(Number);
-      const [dayB, monthB, yearB] = b.pvm.split('-').map(Number);
-      const dateA = new Date(yearA, monthA - 1, dayA);
-      const dateB = new Date(yearB, monthB - 1, dayB);
-      return dateA - dateB;
+      return dateCompare;
     }
     return a.aloitusaika.localeCompare(b.aloitusaika);
   });
