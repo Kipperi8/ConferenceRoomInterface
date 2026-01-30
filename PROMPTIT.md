@@ -1,3 +1,5 @@
+// tässä tehtävässä on käytetty GitHub Copilotia, jossa käytetty kielimalli on Claude Haiku 4.5
+
 User: Haluan, että luot yksinkertaisen kokoushuoneiden varausrajapinnan. Ohjelmointikielenä käytä JavaScriptiä. Sen tulee pystyä tarjoamaan käyttäjille nämä toiminnot:
 
 1. Varauksen luonti; Varaa huone tietylle aikavälille
@@ -299,3 +301,35 @@ ReferenceError: displayMenu is not defined
 - Tämä aiheuttaa runtime-virheen sovelluksen käynnistyessä
 
 Alkuperäisessä versiossani `displayMenu()` sisälsi ASCII art -valiikon, joka näytettiin joka kierroksella. Nyt se on yksinkertaisesti tyhjä funktio, mutta se pitää pitää olemassa kutsuaksesi sitä.
+
+User: Onko node_modules -kansion jokainen node.js moduuli tarpeellinen, jotta sovellus toimii? Mikäli ei ole, niin listaa vain tarpeelliset. Älä tee korjauksia tai muokkauksia.
+
+GitHub Copilot: Ei, kaikki moduulit eivät ole tarpeellisia. Tässä analyysi:
+
+## Suoraan tarpeellinen:
+- **inquirer** - Ainoa moduuli, jota sovellus käyttää suoraan koodissa
+
+## Implisiittiset riippuvuudet (transiittiset):
+Kaikki muut node_modules-kansiossa olevat moduulit ovat **inquirer:n riippuvuuksia**. Ne ovat välttämättömiä `inquirer`:ille toimiakseen, mutta ne eivät ole sovelluksessasi eksplisiittisesti käytössä.
+
+Tyypillisesti inquirer:n riippuvuuksiin kuuluvat mm:
+- `chalk` - väreistä tulostus
+- `cli-cursor` - kohdistimen hallinta
+- `cli-width` - terminaalin leveyden laskeminen
+- `strip-ansi` - ANSI-koodin poistaminen
+- `string-width` - merkkijonon leveyden laskeminen
+- `wrap-ansi` - tekstin rivittäminen
+
+Täydellisen ja tarkan listan näkisit ajamalla:
+```bash
+npm list --depth=0
+```
+
+Tämä näyttäisi vain top-level riippuvuudet (vain `inquirer`), tai:
+```bash
+npm list
+```
+
+Tämä näyttäisi koko dependency-puu kaikilla transiittiivisilla riippuvuuksilla.
+
+**Johtopäätös**: Voit poistaa kaikki muut paitsi `inquirer`:n ja sen riippuvuudet. Käytännössä tämä tarkoittaa, että sinulla on oikea package.json - jos haluat minimoida node_modules-koon, voisit käyttää `npm ci --production` tai `npm install --production` asentaessasi.
