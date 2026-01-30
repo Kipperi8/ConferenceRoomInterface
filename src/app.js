@@ -8,7 +8,7 @@ const database = new Database();
 
 function displayMenu() {
   console.log('\n╔════════════════════════════════════════╗');
-  console.log('║  Kokoushuoneiden varausrajapinta      ║');
+  console.log('║  Kokoushuoneiden varausrajapinta       ║');
   console.log('╠════════════════════════════════════════╣');
   console.log('║  1. Luo varaus                         ║');
   console.log('║  2. Peruuta varaus                     ║');
@@ -44,7 +44,7 @@ async function main() {
     } else if (answer.choice === '3') {
       await viewReservations(database);
     } else if (answer.choice === '4') {
-      console.log('\nOhjelmasta poistutaan. Arvoisa näkemiin!');
+      console.log('\nOhjelmasta poistutaan. Kiitos ja näkemiin!');
       process.exit(0);
     }
   }
