@@ -6,23 +6,13 @@ const viewReservations = require('./commands/view-reservations/viewReservationsC
 
 const database = new Database();
 
-function displayMenu() {
-  console.log('\n╔════════════════════════════════════════╗');
-  console.log('║  Kokoushuoneiden varausrajapinta       ║');
-  console.log('╠════════════════════════════════════════╣');
-  console.log('║  1. Luo varaus                         ║');
-  console.log('║  2. Peruuta varaus                     ║');
-  console.log('║  3. Katso varaukset                    ║');
-  console.log('║  4. Lopeta sovellus                    ║');
-  console.log('╚════════════════════════════════════════╝');
-}
-
 async function main() {
   console.clear();
+  console.log(' ');
   console.log('Tervetuloa kokoushuoneiden varausrajapintaan!');
+  console.log(' ');
 
   while (true) {
-    displayMenu();
     const answer = await inquirer.prompt([
       {
         type: 'list',

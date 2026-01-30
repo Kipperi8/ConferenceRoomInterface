@@ -273,3 +273,29 @@ Ero `prompt-sync`:iin:
 Sovellus on nyt valmis käyttöön ilman termiönä raportoitua ongelmaa! 🎉
 
 Made changes.
+
+User: Miksi funktion displayMenu() poistaminen aiheuttaa sen, että sovellus ei käynnisty? Älä tee korjauksia.
+
+Github Copilot: Ongelma on siinä, että vaikka `displayMenu()` funktio on nyt **tyhjä** (ei tee mitään), se on silti **kutsuttu** `main()` funktian sisällä:
+
+```javascript
+while (true) {
+    displayMenu();  // <-- Tämä kutsu on edelleen olemassa
+    const answer = await inquirer.prompt([
+      // ...
+    ]);
+}
+```
+
+Jos poistat `displayMenu()` funktion kokonaan, sovellus yrittää kutsua funktioita jota ei ole olemassa, mikä aiheuttaa virheen:
+
+```
+ReferenceError: displayMenu is not defined
+```
+
+**Selitys:**
+- Vaikka funktio on tyhjä, JavaScript vaatii että kutsuttu funktio on määritelty
+- Funktio-kutsu `displayMenu()` jää koodiin vaikka funktio poistetaan
+- Tämä aiheuttaa runtime-virheen sovelluksen käynnistyessä
+
+Alkuperäisessä versiossani `displayMenu()` sisälsi ASCII art -valiikon, joka näytettiin joka kierroksella. Nyt se on yksinkertaisesti tyhjä funktio, mutta se pitää pitää olemassa kutsuaksesi sitä.
