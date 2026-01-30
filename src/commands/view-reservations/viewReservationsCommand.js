@@ -15,7 +15,7 @@ async function viewReservations(database) {
     {
       type: 'input',
       name: 'roomId',
-      message: '\nSyötä huoneen ID (tai paina Enter nähdäksesi kaikki varaukset):',
+      message: 'Syötä huoneen ID (tai paina Enter nähdäksesi kaikki varaukset):',
       validate: (input) => {
         if (input === '') {
           return true;
