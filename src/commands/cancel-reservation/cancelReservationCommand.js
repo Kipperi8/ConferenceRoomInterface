@@ -22,7 +22,7 @@ async function cancelReservation(database) {
     {
       type: 'input',
       name: 'reservationId',
-      message: '\nSyötä peruutettavan varauksen ID:',
+      message: 'Syötä peruutettavan varauksen ID:',
       validate: (input) => {
         const id = parseInt(input);
         if (isNaN(id)) {
